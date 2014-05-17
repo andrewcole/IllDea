@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?> 
+<Types>
+  <Type>
+    <Name>Illallangi.IllDea.Model.GitCompany</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Open</Name>
+        <GetScriptBlock>
+          (Get-Variable Dea* -Scope global).Value.Id -eq $this.Id
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+</Types> 
