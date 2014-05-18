@@ -76,6 +76,11 @@ namespace Illallangi.IllDea.Client.Txn
 
             txn.Period = period.Id;
 
+            foreach (var item in txn.Items.Where(i => 0 == i.Amount))
+            {
+                txn.Items.Remove(item);
+            }
+
             if (0 != txn.Items.Sum(i => i.Amount))
             {
                 throw new DataException(
@@ -126,7 +131,7 @@ namespace Illallangi.IllDea.Client.Txn
             if (null != items)
             {
                 txn.Items.Clear();
-                foreach (var item in items)
+                foreach (var item in items.Where(i => 0 != i.Amount))
                 {
                     txn.Items.Add(item);
                 }
