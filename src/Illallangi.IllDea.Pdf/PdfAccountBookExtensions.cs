@@ -1,4 +1,8 @@
-﻿namespace Illallangi.IllDea.Pdf
+﻿using System.Collections.Generic;
+using Illallangi.IllDea.Client.Txn;
+using Illallangi.IllDea.Model;
+
+namespace Illallangi.IllDea.Pdf
 {
     using System;
     using System.IO;
@@ -68,7 +72,7 @@
             var month = string.Empty;
             var day = string.Empty;
 
-            foreach (var txn in client.Txn.Retrieve(companyId).Where(txn => txn.Period.Equals(periodId) && txn.Items.Any(i => i.Account.Equals(accountId))))
+            foreach (var txn in client.Txn.RetrieveForPeriodAndAccount(companyId, periodId, accountId))
             {
                 var item = txn.Items.Single(i => i.Account.Equals(accountId));
 
@@ -118,14 +122,14 @@
                 {
                     table.AddCell(new PdfPCell(new Phrase((0 - item.Amount).ToString(@"C"), PdfAccountBookExtensions.Font.Body)) { HorizontalAlignment = 2 });
                     table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                    table.AddCell(new PdfPCell { MinimumHeight = 13f });    
                 }
                 else
                 {
                     table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                    table.AddCell(new PdfPCell(new Phrase((item.Amount).ToString(@"C"), PdfAccountBookExtensions.Font.Body)) { HorizontalAlignment = 2 });
-                    table.AddCell(new PdfPCell { MinimumHeight = 13f });
+                    table.AddCell(new PdfPCell(new Phrase(item.Amount.ToString(@"C"), PdfAccountBookExtensions.Font.Body)) { HorizontalAlignment = 2 });
                 }
+
+                table.AddCell(new PdfPCell(new Phrase(txn.Balance.ToString(@"C"), PdfAccountBookExtensions.Font.Body)) { HorizontalAlignment = 2 });
 
                 table.AddCell(new PdfPCell { MinimumHeight = 13f });
                 table.AddCell(new PdfPCell { MinimumHeight = 13f });
