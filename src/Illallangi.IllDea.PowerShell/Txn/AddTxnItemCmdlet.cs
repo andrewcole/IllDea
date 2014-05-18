@@ -7,10 +7,13 @@
 
     using Illallangi.IllDea.Model;
 
-    [Cmdlet(VerbsCommon.Add, Nouns.TxnItem, DefaultParameterSetName = AddTxnItemCmdlet.NameParameterSet)]
+    [Cmdlet(VerbsCommon.Add, Nouns.TxnItem)]
     public sealed class AddTxnItemCmdlet : DeaCmdlet, ITxn
     {
         #region Fields
+
+        private const string FilterParameterSet = @"Filter";
+        private const string IdParameterSet = @"Id";
 
         private IList<TxnItem> currentItems;
 
@@ -24,45 +27,30 @@
 
         private WildcardPattern currentAccountNumberWildcardPattern;
 
-        private const string IdParameterSet = @"Id";
-
-        private const string NameParameterSet = @"Name";
-
-        private const string AccountParameterSet = @"Account";
-
-        private const string NumberParameterSet = @"Number";
         #endregion
 
         #region Properties
 
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.AccountParameterSet)]
+        #region Txn Properties
+
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.IdParameterSet)]
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.NameParameterSet)]
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.NumberParameterSet)]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.FilterParameterSet)]
         public Guid Id { get; set; }
 
-        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.AccountParameterSet)]
         [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.IdParameterSet)]
-        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.NameParameterSet)]
-        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.NumberParameterSet)]
+        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.FilterParameterSet)]
         public Guid Period { get; set; }
 
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.AccountParameterSet)]
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.IdParameterSet)]
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.NameParameterSet)]
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.NumberParameterSet)]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.FilterParameterSet)]
         public DateTime Date { get; set; }
 
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.AccountParameterSet)]
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.IdParameterSet)]
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.NameParameterSet)]
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.NumberParameterSet)]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.FilterParameterSet)]
         public string Description { get; set; }
 
-        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.AccountParameterSet)]
         [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.IdParameterSet)]
-        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.NameParameterSet)]
-        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.NumberParameterSet)]
+        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, ParameterSetName = AddTxnItemCmdlet.FilterParameterSet)]
         public IList<TxnItem> Items
         {
             get
@@ -75,51 +63,23 @@
             }
         }
 
-        [Parameter(Mandatory = false, ParameterSetName = AddTxnItemCmdlet.AccountParameterSet)]
+        #endregion
+
+        #region TxnItem Properties
+
         [Parameter(Mandatory = false, ParameterSetName = AddTxnItemCmdlet.IdParameterSet)]
-        [Parameter(Mandatory = false, ParameterSetName = AddTxnItemCmdlet.NameParameterSet)]
-        [Parameter(Mandatory = false, ParameterSetName = AddTxnItemCmdlet.NumberParameterSet)]
+        [Parameter(Mandatory = false, ParameterSetName = AddTxnItemCmdlet.FilterParameterSet)]
         public string Comment { get; set; }
 
-        [Parameter(Mandatory = true, ParameterSetName = AddTxnItemCmdlet.AccountParameterSet)]
         [Parameter(Mandatory = true, ParameterSetName = AddTxnItemCmdlet.IdParameterSet)]
-        [Parameter(Mandatory = true, ParameterSetName = AddTxnItemCmdlet.NameParameterSet)]
-        [Parameter(Mandatory = true, ParameterSetName = AddTxnItemCmdlet.NumberParameterSet)]
+        [Parameter(Mandatory = true, ParameterSetName = AddTxnItemCmdlet.FilterParameterSet)]
         public double Amount { get; set; }
 
-        
-        [Parameter(Mandatory = true, ParameterSetName = AddTxnItemCmdlet.AccountParameterSet)]
-        public IAccount Account { get; set; }
-
         [Parameter(Mandatory = true, ParameterSetName = AddTxnItemCmdlet.IdParameterSet)]
-        public Guid AccountId
-        {
-            get
-            {
-                switch (this.ParameterSetName)
-                {
-                    case AddTxnItemCmdlet.AccountParameterSet:
-                        return this.Account.Id;
-
-                    case AddTxnItemCmdlet.IdParameterSet:
-                        return this.currentAccountId;
-
-                    case AddTxnItemCmdlet.NameParameterSet:
-                    case AddTxnItemCmdlet.NumberParameterSet:
-                        return this.Client.Account.Retrieve(this.CompanyId).Single(this.IsMatch).Id;
-
-                    default:
-                        throw new NotImplementedException(this.ParameterSetName);
-                }
-            }
-            set
-            {
-                this.currentAccountId = value;
-            }
-        }
-
+        public Guid? AccountId { get; set; }
+        
         [SupportsWildcards]
-        [Parameter(Mandatory = true, ParameterSetName = AddTxnItemCmdlet.NameParameterSet)]
+        [Parameter(Mandatory = false, ParameterSetName = AddTxnItemCmdlet.FilterParameterSet)]
         public string AccountName
         {
             get
@@ -134,7 +94,7 @@
         }
 
         [SupportsWildcards]
-        [Parameter(Mandatory = true, ParameterSetName = AddTxnItemCmdlet.NumberParameterSet)]
+        [Parameter(Mandatory = false, ParameterSetName = AddTxnItemCmdlet.FilterParameterSet)]
         public string AccountNumber
         {
             get
@@ -170,11 +130,15 @@
 
         #endregion
 
+        #endregion
+
         #region Methods
 
         protected override void ProcessRecord()
         {
-            var txnItem = this.Items.SingleOrDefault(i => i.Account.Equals(this.AccountId));
+            var account = this.Client.Account.Retrieve(this.CompanyId).Single(this.IsMatch);
+
+            var txnItem = this.Items.SingleOrDefault(i => i.Account.Equals(account.Id));
 
             if (null != txnItem)
             {
@@ -187,7 +151,7 @@
                     new TxnItem
                         {
                             Comment = this.Comment ?? string.Empty,
-                            Account = this.AccountId,
+                            Account = account.Id,
                             Amount = this.Amount,
                         });
             }
@@ -198,16 +162,17 @@
         {
             switch (this.ParameterSetName)
             {
-                case NameParameterSet:
-                    return this.AccountNameWildcardPattern.IsMatch(account.Name);
+                case AddTxnItemCmdlet.IdParameterSet:
+                    return this.AccountId.HasValue &&
+                           this.AccountId.Value.Equals(account.Id);
 
-                case NumberParameterSet:
-                    return this.AccountNumberWildcardPattern.IsMatch(account.Number);
+                case AddTxnItemCmdlet.FilterParameterSet:
+                    return this.AccountNumberWildcardPattern.IsMatch(account.Number)
+                           && this.AccountNameWildcardPattern.IsMatch(account.Name);
 
                 default:
                     throw new NotImplementedException(this.ParameterSetName);
             }
-            
         }
 
         public override string ToString()

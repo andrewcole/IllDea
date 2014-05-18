@@ -19,7 +19,7 @@
         [Parameter(Mandatory = true)]
         public string Description { get; set; }
 
-        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Mandatory = false)]
         public IList<TxnItem> Items
         {
             get

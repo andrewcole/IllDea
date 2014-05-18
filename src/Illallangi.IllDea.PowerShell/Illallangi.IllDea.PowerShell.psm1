@@ -75,13 +75,48 @@ if ($null -ne (Get-Module PSCompletion))
 		Get-Period | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
 	}
 
-	Register-ParameterCompleter Add-TxnItem AccountName {
-		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
-		Get-Account -CompanyId (Get-Variable Dea* -Scope global).Value.Id -Name "$wordToComplete*" | Sort-Object { $_.Name } |%{ New-CompletionResult """$($_.Name)""" }
-	}
-
 	Register-ParameterCompleter Get-Txn Description {
 		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
-		Get-Txn -CompanyId (Get-Variable Dea* -Scope global).Value.Id -Description "$wordToComplete*" | Sort-Object { $_.Description } |%{ New-CompletionResult """$($_.Description)""" }
+		Get-Txn -Description "$wordToComplete*" | Sort-Object { $_.Description } |%{ New-CompletionResult """$($_.Description)""" }
+	}
+
+	Register-ParameterCompleter Get-Txn Date {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Txn | Where-Object { $_.Date.ToString("yyyy-MM-dd") -like "$wordToComplete*" } | Sort-Object { $_.Date } |%{ New-CompletionResult "$($_.Date.ToString("yyyy-MM-dd"))" }
+	}
+
+	Register-ParameterCompleter Get-Txn Id {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Txn | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
+	}
+
+	Register-ParameterCompleter Remove-Txn Description {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Txn -Description "$wordToComplete*" | Sort-Object { $_.Description } |%{ New-CompletionResult """$($_.Description)""" }
+	}
+
+	Register-ParameterCompleter Remove-Txn Date {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Txn | Where-Object { $_.Date.ToString("yyyy-MM-dd") -like "$wordToComplete*" } | Sort-Object { $_.Date } |%{ New-CompletionResult "$($_.Date.ToString("yyyy-MM-dd"))" }
+	}
+
+	Register-ParameterCompleter Remove-Txn Id {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Txn | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
+	}
+
+	Register-ParameterCompleter Add-TxnItem AccountName {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Account -Name "$wordToComplete*" | Sort-Object { $_.Name } |%{ New-CompletionResult """$($_.Name)""" }
+	}
+
+	Register-ParameterCompleter Add-TxnItem AccountNumber {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Account | Where-Object { $_.Number.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Number } |%{ New-CompletionResult """$($_.Number)""" }
+	}
+
+	Register-ParameterCompleter Add-TxnItem AccountId {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Account | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
 	}
 }

@@ -4,18 +4,26 @@
     using System.Linq;
     using System.Management.Automation;
 
-    [Cmdlet(VerbsCommon.Remove, Nouns.Txn)]
-    public sealed class RemoveTxnCmdlet : DeaCmdlet
-    {
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public Guid Id { get; set; }
+    using Illallangi.IllDea.Model;
 
+    [Cmdlet(VerbsCommon.Remove, Nouns.Txn, SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    public sealed class RemoveTxnCmdlet : GetTxnCmdlet
+    {
         protected override void ProcessRecord()
         {
-            this.Client.Txn.Delete(
-                this.CompanyId,
-                this.Client.Txn.Retrieve(this.CompanyId).Single(t => t.Id.Equals(this.Id)),
-                this.ToString());
+            foreach (var txn in this.Client.Txn.Retrieve(this.CompanyId).Where(this.IsMatch))
+            {
+                this.Client.Txn.Delete(
+                    this.CompanyId,
+                    txn,
+                    this.ToString());
+            }
+        }
+
+        protected override bool IsMatch(ITxn txn)
+        {
+            return base.IsMatch(txn) &&
+                   this.ShouldProcess(txn.ToString(), VerbsCommon.Remove);
         }
 
         public override string ToString()
