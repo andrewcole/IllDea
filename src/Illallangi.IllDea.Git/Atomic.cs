@@ -75,6 +75,16 @@ namespace Illallangi.IllDea
 
         public void Dispose()
         {
+            if (!Directory.Exists(this.Index.RootPath))
+            {
+                Directory.CreateDirectory(this.Index.RootPath);
+            }
+
+            if (null == GitSharp.Repository.FindRepository(this.Index.RootPath))
+            {
+                GitSharp.Repository.Init(this.Index.RootPath);
+            }
+
             using (var repo = new GitSharp.Repository(this.Index.RootPath))
             {
                 foreach (var obj in this.Adds)

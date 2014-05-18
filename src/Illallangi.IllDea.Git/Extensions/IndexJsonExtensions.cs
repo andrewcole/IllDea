@@ -4,8 +4,6 @@ namespace Illallangi.IllDea
     using System.Globalization;
     using System.IO;
 
-    using GitSharp;
-
     using Illallangi.IllDea.Model;
 
     using Newtonsoft.Json;
@@ -49,27 +47,7 @@ namespace Illallangi.IllDea
 
             return result;
         }
-
-        public static void InitRepo(this GitSettings index)
-        {
-            if (null == Repository.FindRepository(index.RootPath))
-            {
-                Repository.Init(index.RootPath);
-            }
-        }
-
-        public static void CommitFiles(this GitSettings index, string message, params string[] files)
-        {
-            if (null == Repository.FindRepository(index.RootPath))
-            {
-                throw new Exception("Git repo not initialised");
-            }
-
-            var repo = new Repository(index.RootPath);
-            repo.Index.Add(files);
-            repo.Commit(message, new Author("Illallangi Double Entry Accounting", "enquiries@illdea.com"));
-        }
-
+        
         private static T Deserialize<T>(string path)
         {
             return JsonConvert.DeserializeObject<T>(

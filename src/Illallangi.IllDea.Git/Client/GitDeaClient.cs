@@ -190,8 +190,6 @@
             while (this.Retrieve(id).Any());
 
             var rootPath = Path.Combine(this.DataFolder, id.ToString());
-            Directory.CreateDirectory(rootPath);
-            GitSharp.Repository.Init(rootPath);
 
             var index = new GitSettings
             {
