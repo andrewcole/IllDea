@@ -1,4 +1,6 @@
-﻿namespace Illallangi.IllDea.Client.Txn
+﻿using System.Data;
+
+namespace Illallangi.IllDea.Client.Txn
 {
     using System;
     using System.Collections.Generic;
@@ -74,9 +76,17 @@
 
             txn.Period = period.Id;
 
+            if (0 != txn.Items.Sum(i => i.Amount))
+            {
+                throw new DataException(
+                    string.Format(
+                        "Sum of items in transaction is {0} (expected 0)",
+                        txn.Items.Sum(i => i.Amount)));
+            }
+
+
             using (var atomic = index.Atomic(log ?? "Adding Txn {0}:- {1}", txn.Date.ToString("yyyy-MM-dd"), txn.Description))
             {
-
                 index.Txns.Add(txn.Id);
                 atomic.Save(txn);
             }
@@ -125,7 +135,15 @@
             var period = this.Client.Period.Retrieve(companyId).Single(p => (p.Start <= txn.Date) && (p.End >= txn.Date));
 
             txn.Period = period.Id;
-            
+
+            if (0 != txn.Items.Sum(i => i.Amount))
+            {
+                throw new DataException(
+                    string.Format(
+                        "Sum of items in transaction is {0} (expected 0)",
+                        txn.Items.Sum(i => i.Amount)));
+            }
+
             using (var atomic = this.Client.Retrieve(id: txn.Index).Single().Atomic(log ?? "Updating Txn"))
             {
                 return atomic.Save(txn);

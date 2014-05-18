@@ -73,7 +73,7 @@
 
         [Parameter(Mandatory = true, ParameterSetName = AddTxnItemCmdlet.IdParameterSet)]
         [Parameter(Mandatory = true, ParameterSetName = AddTxnItemCmdlet.FilterParameterSet)]
-        public double Amount { get; set; }
+        public decimal Amount { get; set; }
 
         [Parameter(Mandatory = true, ParameterSetName = AddTxnItemCmdlet.IdParameterSet)]
         public Guid? AccountId { get; set; }
