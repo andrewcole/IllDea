@@ -45,6 +45,36 @@ if ($null -ne (Get-Module PSCompletion))
 		Get-Account | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
 	}
 
+	Register-ParameterCompleter Get-Period Start {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Period | Where-Object { $_.Start.ToString("yyyy-MM-dd") -like "$wordToComplete*" } | Sort-Object { $_.Start } |%{ New-CompletionResult "$($_.Start.ToString("yyyy-MM-dd"))" }
+	}
+
+	Register-ParameterCompleter Get-Period End {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Period | Where-Object { $_.End.ToString("yyyy-MM-dd") -like "$wordToComplete*" } | Sort-Object { $_.End } |%{ New-CompletionResult "$($_.End.ToString("yyyy-MM-dd"))" }
+	}
+
+	Register-ParameterCompleter Get-Period Id {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Period | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
+	}
+
+	Register-ParameterCompleter Remove-Period Start {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Period | Where-Object { $_.Start.ToString("yyyy-MM-dd") -like "$wordToComplete*" } | Sort-Object { $_.Start } |%{ New-CompletionResult "$($_.Start.ToString("yyyy-MM-dd"))" }
+	}
+
+	Register-ParameterCompleter Remove-Period End {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Period | Where-Object { $_.End.ToString("yyyy-MM-dd") -like "$wordToComplete*" } | Sort-Object { $_.End } |%{ New-CompletionResult "$($_.End.ToString("yyyy-MM-dd"))" }
+	}
+
+	Register-ParameterCompleter Remove-Period Id {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Period | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
+	}
+
 	Register-ParameterCompleter Add-TxnItem AccountName {
 		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
 		Get-Account -CompanyId (Get-Variable Dea* -Scope global).Value.Id -Name "$wordToComplete*" | Sort-Object { $_.Name } |%{ New-CompletionResult """$($_.Name)""" }

@@ -16,5 +16,16 @@
         public DateTime End { get; set; }
 
         #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            return string.Format(@"Period from {0} to {1}",
+                this.Start,
+                this.End);
+        }
+
+        #endregion
     }
 }

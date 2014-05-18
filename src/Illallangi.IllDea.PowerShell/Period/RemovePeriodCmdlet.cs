@@ -6,18 +6,24 @@
 
     using Illallangi.IllDea.Model;
 
-    [Cmdlet(VerbsCommon.Remove, Nouns.Period)]
-    public sealed class RemovePeriodCmdlet : DeaCmdlet
+    [Cmdlet(VerbsCommon.Remove, Nouns.Period, SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    public sealed class RemovePeriodCmdlet : GetPeriodCmdlet
     {
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public Guid Id { get; set; }
-
         protected override void ProcessRecord()
         {
-            this.Client.Period.Delete(
-                this.CompanyId,
-                this.Client.Period.Retrieve(this.CompanyId).Single(p => p.Id.Equals(this.Id)),
-                this.ToString());
+            foreach (var period in this.Client.Period.Retrieve(this.CompanyId).Where(this.IsMatch))
+            {
+                this.Client.Period.Delete(
+                    this.CompanyId,
+                    period,
+                    this.ToString());
+            }
+        }
+
+        protected override bool IsMatch(IPeriod period)
+        {
+            return base.IsMatch(period) &&
+                   this.ShouldProcess(period.ToString(), VerbsCommon.Remove);
         }
 
         public override string ToString()
