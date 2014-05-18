@@ -6,18 +6,24 @@
 
     using Illallangi.IllDea.Model;
 
-    [Cmdlet(VerbsCommon.Remove, Nouns.Account)]
-    public sealed class RemoveAccountCmdlet : DeaCmdlet
+    [Cmdlet(VerbsCommon.Remove, Nouns.Account, SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    public sealed class RemoveAccountCmdlet : GetAccountCmdlet
     {
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true)]
-        public Guid Id { get; set; }
-
         protected override void ProcessRecord()
         {
-            this.Client.Account.Delete(
-                this.CompanyId,
-                this.Client.Account.Retrieve(this.CompanyId).Single(a => a.Id.Equals(this.Id)),
-                this.ToString());
+            foreach (var account in this.Client.Account.Retrieve(this.CompanyId).Where(this.IsMatch))
+            {
+                this.Client.Account.Delete(
+                    this.CompanyId,
+                    account,
+                    this.ToString());
+            }
+        }
+
+        protected override bool IsMatch(IAccount account)
+        {
+            return base.IsMatch(account) &&
+                   this.ShouldProcess(account.ToString(), VerbsCommon.Remove);
         }
 
         public override string ToString()

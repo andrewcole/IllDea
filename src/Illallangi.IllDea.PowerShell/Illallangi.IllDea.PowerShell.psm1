@@ -15,6 +15,36 @@ if ($null -ne (Get-Module PSCompletion))
 		Get-Company -Name "$wordToComplete*" | Sort-Object { $_.Name } |%{ New-CompletionResult """$($_.Name)""" }
 	}
 
+	Register-ParameterCompleter Get-Account Name {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Account -Name "$wordToComplete*" | Sort-Object { $_.Name } |%{ New-CompletionResult """$($_.Name)""" }
+	}
+	
+	Register-ParameterCompleter Get-Account Number {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Account | Where-Object { $_.Number.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Number } |%{ New-CompletionResult """$($_.Number)""" }
+	}
+
+	Register-ParameterCompleter Get-Account Id {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Account | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
+	}
+
+	Register-ParameterCompleter Remove-Account Name {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Account -Name "$wordToComplete*" | Sort-Object { $_.Name } |%{ New-CompletionResult """$($_.Name)""" }
+	}
+	
+	Register-ParameterCompleter Remove-Account Number {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Account | Where-Object { $_.Number.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Number } |%{ New-CompletionResult """$($_.Number)""" }
+	}
+
+	Register-ParameterCompleter Remove-Account Id {
+		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+		Get-Account | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
+	}
+
 	Register-ParameterCompleter Add-TxnItem AccountName {
 		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
 		Get-Account -CompanyId (Get-Variable Dea* -Scope global).Value.Id -Name "$wordToComplete*" | Sort-Object { $_.Name } |%{ New-CompletionResult """$($_.Name)""" }

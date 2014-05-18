@@ -1,4 +1,6 @@
-﻿namespace Illallangi.IllDea.PowerShell.Account
+﻿using System;
+
+namespace Illallangi.IllDea.PowerShell.Account
 {
     using System.Linq;
     using System.Management.Automation;
@@ -6,8 +8,11 @@
     using Illallangi.IllDea.Model;
 
     [Cmdlet(VerbsCommon.Get, Nouns.Account)]
-    public sealed class GetAccountCmdlet : DeaCmdlet
+    public class GetAccountCmdlet : DeaCmdlet
     {
+        private const string FilterParameterSet = @"Filter";
+        private const string IdParameterSet = @"Id";
+
         private string currentName;
 
         private string currentNumber;
@@ -16,8 +21,11 @@
         
         private WildcardPattern currentNameWildcardPattern;
 
+        [Parameter(Mandatory = true, ParameterSetName = GetAccountCmdlet.IdParameterSet, ValueFromPipelineByPropertyName = true)]
+        public Guid? Id { get; set; }
+
         [SupportsWildcards]
-        [Parameter(Position = 1)]
+        [Parameter(Position = 1, ParameterSetName = GetAccountCmdlet.FilterParameterSet)]
         public string Name
         {
             get
@@ -31,11 +39,11 @@
             }
         }
 
-        [Parameter]
+        [Parameter(ParameterSetName = GetAccountCmdlet.FilterParameterSet)]
         public AccountType? Type { get; set; }
 
         [SupportsWildcards]
-        [Parameter]
+        [Parameter(ParameterSetName = GetAccountCmdlet.FilterParameterSet)]
         public string Number
         {
             get
@@ -54,11 +62,22 @@
             this.WriteObject(this.Client.Account.Retrieve(this.CompanyId).Where(this.IsMatch), true);
         }
 
-        private bool IsMatch(IAccount account)
+        protected virtual bool IsMatch(IAccount account)
         {
-            return this.NumberWildcardPattern.IsMatch(account.Number)
-                   && (!this.Type.HasValue || account.Type.Equals(this.Type.Value))
-                   && this.NameWildcardPattern.IsMatch(account.Name);
+            switch (this.ParameterSetName)
+            {
+                case GetAccountCmdlet.IdParameterSet:
+                    return this.Id.HasValue &&
+                           this.Id.Value.Equals(account.Id);
+
+                case GetAccountCmdlet.FilterParameterSet:
+                    return this.NumberWildcardPattern.IsMatch(account.Number)
+                           && (!this.Type.HasValue || account.Type.Equals(this.Type.Value))
+                           && this.NameWildcardPattern.IsMatch(account.Name);
+
+                default:
+                    throw new NotImplementedException(this.ParameterSetName);
+            }
         }
 
         private WildcardPattern NumberWildcardPattern 

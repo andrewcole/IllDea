@@ -16,5 +16,17 @@
         public string Number { get; set; }
 
         #endregion
+
+        #region Methods
+
+        public override string ToString()
+        {
+            return string.Format(@"{2} Account #{0}: {1}",
+                this.Number,
+                this.Name,
+                this.Type);
+        }
+
+        #endregion
     }
 }
