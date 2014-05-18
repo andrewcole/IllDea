@@ -1,3 +1,7 @@
+using System.Linq;
+using System.Net.Configuration;
+using LibGit2Sharp;
+
 namespace Illallangi.IllDea
 {
     using System;
@@ -80,36 +84,59 @@ namespace Illallangi.IllDea
                 Directory.CreateDirectory(this.Index.RootPath);
             }
 
-            if (null == GitSharp.Repository.FindRepository(this.Index.RootPath))
+            if (!Repository.IsValid(this.Index.RootPath))
             {
-                GitSharp.Repository.Init(this.Index.RootPath);
+                Repository.Init(this.Index.RootPath, false);
             }
 
-            using (var repo = new GitSharp.Repository(this.Index.RootPath))
+            using (var repo = new Repository(this.Index.RootPath))
             {
-                foreach (var obj in this.Adds)
+                if (this.HasRemovePaths)
                 {
-                    repo.Index.Add(Atomic.Save(this.Index, obj));
+                    repo.Index.Remove(this.RemovePaths, true);
                 }
 
-                foreach (var obj in this.Deletes)
-                {
-                    repo.Index.Delete(Atomic.Save(this.Index, obj));
-                }
-
-                foreach (var file in this.Files)
-                {
-                    repo.Index.Add(file);
-                }
-
-                repo.Index.Add(Atomic.Save(this.Index));
-                repo.Index.Add(Atomic.Save(this.Index, this.Index));
+                repo.Index.Stage(this.StagePaths);
 
                 repo.Commit(
                     string.Format(this.Message, this.Args),
-                    new GitSharp.Author(this.Index.AuthorName, this.Index.AuthorEmail));
+                    new Signature(this.Index.AuthorName, this.Index.AuthorEmail, DateTimeOffset.Now),
+                    new Signature(this.Index.AuthorName, this.Index.AuthorEmail, DateTimeOffset.Now),
+                    new CommitOptions
+                    {
+                        AllowEmptyCommit = false,
+                        AmendPreviousCommit = false,
+                    });
             }
         }
+
+        private bool HasRemovePaths
+        {
+            get { return this.Deletes.Any(); }
+        }
+
+        private IEnumerable<string> RemovePaths
+        {
+            get
+            {
+                return this.Deletes.Select(a => Atomic.Save(this.Index, a));
+            }
+        }
+
+        private IEnumerable<string> StagePaths
+        {
+            get
+            {
+                return this.Adds.Select(a => Atomic.Save(this.Index, a))
+                    .Concat(this.Files)
+                    .Concat(new String[]
+                    {
+                        Atomic.Save(this.Index),
+                        Atomic.Save(this.Index, this.Index)
+                    });
+            }
+        }
+
 
         private GitSettings Index
         {
