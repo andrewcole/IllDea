@@ -98,15 +98,22 @@ namespace Illallangi.IllDea
 
                 repo.Index.Stage(this.StagePaths);
 
-                repo.Commit(
-                    string.Format(this.Message, this.Args),
-                    new Signature(this.Index.AuthorName, this.Index.AuthorEmail, DateTimeOffset.Now),
-                    new Signature(this.Index.AuthorName, this.Index.AuthorEmail, DateTimeOffset.Now),
-                    new CommitOptions
-                    {
-                        AllowEmptyCommit = false,
-                        AmendPreviousCommit = false,
-                    });
+                try
+                {
+                    repo.Commit(
+                        string.Format(this.Message, this.Args),
+                        new Signature(this.Index.AuthorName, this.Index.AuthorEmail, DateTimeOffset.Now),
+                        new Signature(this.Index.AuthorName, this.Index.AuthorEmail, DateTimeOffset.Now),
+                        new CommitOptions
+                        {
+                            AllowEmptyCommit = false,
+                            AmendPreviousCommit = false,
+                        });
+                }
+                catch (EmptyCommitException)
+                {
+                    
+                }
             }
         }
 
