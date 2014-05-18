@@ -33,7 +33,7 @@
 
         protected ICompany OpenCompany(ICompany company)
         {
-            this.SessionState.PSVariable.Set(new PSVariable("DeaCompany", company, ScopedItemOptions.Private));
+            this.SessionState.PSVariable.Set(new PSVariable("DeaCompany", company, ScopedItemOptions.AllScope));
             return company;
         }
 
