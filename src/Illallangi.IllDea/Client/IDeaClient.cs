@@ -1,4 +1,6 @@
-﻿namespace Illallangi.IllDea.Client
+﻿using Illallangi.IllDea.Client.Txn;
+
+namespace Illallangi.IllDea.Client
 {
     using Illallangi.IllDea.Client.Company;
     using Illallangi.IllDea.Client.Settings;
@@ -13,6 +15,6 @@
         ICrudClient<IAccount> Account { get; }
         ICrudClient<IDocument> Document { get; } 
         ICrudClient<IPeriod> Period { get; }
-        ICrudClient<ITxn> Txn { get; }
+        ITxnClient Txn { get; }
     }
 }

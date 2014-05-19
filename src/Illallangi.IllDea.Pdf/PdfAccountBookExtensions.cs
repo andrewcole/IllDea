@@ -72,7 +72,7 @@ namespace Illallangi.IllDea.Pdf
             var month = string.Empty;
             var day = string.Empty;
 
-            foreach (var txn in client.Txn.RetrieveForPeriodAndAccount(companyId, periodId, accountId))
+            foreach (var txn in client.Txn.RetrieveWithBalances(companyId, periodId, accountId))
             {
                 var item = txn.Items.Single(i => i.Account.Equals(accountId));
 
@@ -129,7 +129,7 @@ namespace Illallangi.IllDea.Pdf
                     table.AddCell(new PdfPCell(new Phrase(item.Amount.ToString(@"C"), PdfAccountBookExtensions.Font.Body)) { HorizontalAlignment = 2 });
                 }
 
-                table.AddCell(new PdfPCell(new Phrase(txn.Balance.ToString(@"C"), PdfAccountBookExtensions.Font.Body)) { HorizontalAlignment = 2 });
+                table.AddCell(new PdfPCell(new Phrase(item.BalanceAfter.ToString(@"C"), PdfAccountBookExtensions.Font.Body)) { HorizontalAlignment = 2 });
 
                 table.AddCell(new PdfPCell { MinimumHeight = 13f });
                 table.AddCell(new PdfPCell { MinimumHeight = 13f });

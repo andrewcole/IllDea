@@ -10,6 +10,10 @@
 
         public decimal Amount { get; set; }
 
+        public decimal BalanceAfter { get; set; }
+
+        public decimal BalanceBefore { get; set; }
+
         public bool IsDebit 
         {
             get

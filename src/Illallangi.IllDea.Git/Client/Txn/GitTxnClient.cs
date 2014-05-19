@@ -10,7 +10,7 @@ namespace Illallangi.IllDea.Client.Txn
 
     using Illallangi.IllDea.Model;
 
-    public sealed class GitTxnClient : BaseClient, ICrudClient<ITxn>
+    public sealed class GitTxnClient : BaseClient, ITxnClient
     {
         #region Fields
 
@@ -67,6 +67,31 @@ namespace Illallangi.IllDea.Client.Txn
             this.DeleteTxn(
                 this.RetrieveTxn(companyId: companyId, id: txn.Id).Single(),
                 log);
+        }
+
+        public IEnumerable<ITxn> RetrieveWithBalances(Guid companyId, Guid? periodId = null, Guid? accountId = null)
+        {
+            IDictionary<Guid, decimal> balances = new Dictionary<Guid, decimal>();
+
+            foreach (var txn in this.RetrieveTxn(companyId).Where(txn => txn.Items.Any(i => !accountId.HasValue || i.Account.Equals(accountId))).OrderBy(t => t.Date))
+            {
+                foreach (var txnItem in txn.Items)
+                {
+                    if (!balances.ContainsKey(txnItem.Account))
+                    {
+                        balances.Add(txnItem.Account, 0);
+                    }
+
+                    txnItem.BalanceBefore = balances[txnItem.Account];
+                    balances[txnItem.Account] += txnItem.Amount;
+                    txnItem.BalanceAfter = balances[txnItem.Account];
+                }
+
+                if (!periodId.HasValue || txn.Period.Equals(periodId))
+                {
+                    yield return txn;
+                }
+            }
         }
 
         private GitTxn CreateTxn(Guid companyId, GitTxn txn, string log = null)

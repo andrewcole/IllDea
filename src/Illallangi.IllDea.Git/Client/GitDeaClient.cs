@@ -32,7 +32,7 @@
 
         private ICrudClient<IPeriod> currentPeriod;
 
-        private ICrudClient<ITxn> currentTxn;
+        private ITxnClient currentTxn;
 
         #endregion
 
@@ -86,7 +86,7 @@
             }
         }
         
-        public ICrudClient<ITxn> Txn
+        public ITxnClient Txn
         {
             get
             {
@@ -245,7 +245,7 @@
             return new GitPeriodClient(this).HookEvents(this);
         }
 
-        private ICrudClient<ITxn> GetTxnClient()
+        private ITxnClient GetTxnClient()
         {
             return new GitTxnClient(this).HookEvents(this);
         }
