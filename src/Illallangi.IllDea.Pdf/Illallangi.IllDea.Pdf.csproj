@@ -48,9 +48,11 @@
     <Compile Include="PdfBookExtensions.cs" />
     <Compile Include="PdfAccountBookExtensions.cs" />
     <Compile Include="PdfAttachedDocumentExtensions.cs" />
+    <Compile Include="PdfCellOperation.cs" />
     <Compile Include="PdfPeriodCoverPageExtensions.cs" />
     <Compile Include="PdfGeneralJournalExtensions.cs" />
     <Compile Include="PdfChartOfAccountsExtensions.cs" />
+    <Compile Include="PdfPTableExtensions.cs" />
     <Compile Include="PeriodExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,9 +1,16 @@
-﻿namespace Illallangi.IllDea.Pdf
+﻿using iTextSharp.text.pdf;
+
+namespace Illallangi.IllDea.Pdf
 {
     using iTextSharp.text;
 
     public sealed class FontSelection
     {
+        public FontSelection()
+        {
+            FontFactory.RegisterDirectory("C:\\WINDOWS\\Fonts");
+        }
+
         private Font currentBody;
 
         private Font currentBodyItalic;
@@ -14,6 +21,40 @@
 
         private Font currentDocumentHeader;
 
+        private Font currentHeader1;
+        private Font currentBold;
+
+        public Font Header1
+        {
+            get
+            {
+                return this.currentHeader1 ??
+                       (this.currentHeader1 = 
+                        FontFactory.GetFont(
+                            @"Cambria", 
+                            BaseFont.CP1252,
+                            ! BaseFont.EMBEDDED,
+                            14, 
+                            Font.BOLD, 
+                            new BaseColor(54, 95, 145)));
+            }
+        }
+
+        public Font Bold
+        {
+            get
+            {
+                return this.currentBold ??
+                        (this.currentBold = 
+                        FontFactory.GetFont(
+                            @"Calibri",
+                            BaseFont.CP1252,
+                            ! BaseFont.EMBEDDED,
+                            11,
+                            Font.BOLD,
+                            BaseColor.BLACK));
+            }
+        }
         public Font Body
         {
             get
