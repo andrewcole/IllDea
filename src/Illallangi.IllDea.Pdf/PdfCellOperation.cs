@@ -115,6 +115,24 @@ namespace Illallangi.IllDea.Pdf
                 .WithMinimumHeight(13f)
                 .WithTabStops(false);
         }
+
+
+        public PdfCellOperation AddItalicisedBodyCell(params string[] args)
+        {
+            foreach (var arg in args)
+            {
+                this.Args.Add(arg);
+            }
+
+            return this
+                .LeftAligned()
+                .WithBackgroundColor(BaseColor.WHITE)
+                .WithBorder(Rectangle.NO_BORDER)
+                .WithColspan(1)
+                .WithFont(PdfCellOperation.FontSelection.BodyItalic)
+                .WithMinimumHeight(13f)
+                .WithTabStops(false);
+        }
         
         #endregion
         
@@ -167,6 +185,11 @@ namespace Illallangi.IllDea.Pdf
             this.Alignment = Element.ALIGN_CENTER;
             return this;
         }
+        public PdfCellOperation RightAligned()
+        {
+            this.Alignment = Element.ALIGN_RIGHT;
+            return this;
+        }
         
         private PdfCellOperation WithBackgroundColor(BaseColor backgroundColor)
         {
@@ -180,7 +203,7 @@ namespace Illallangi.IllDea.Pdf
             return this;
         }
 
-        private PdfCellOperation WithColspan(int colspan)
+        public PdfCellOperation WithColspan(int colspan)
         {
             this.Colspan = colspan;
             return this;

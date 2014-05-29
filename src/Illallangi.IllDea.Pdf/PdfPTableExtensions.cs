@@ -23,5 +23,10 @@ namespace Illallangi.IllDea.Pdf
         {
             return new PdfCellOperation(table).AddBodyCell(args);
         }
+
+        public static PdfCellOperation AddItalicisedBodyCell(this PdfPTable table, params string[] args)
+        {
+            return new PdfCellOperation(table).AddItalicisedBodyCell(args);
+        }
     }
 }
