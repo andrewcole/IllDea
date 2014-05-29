@@ -11,21 +11,21 @@
 
     public static class PdfChartOfAccountsExtensions
     {
-       public static void CreateChartOfAccounts(this IDeaClient client, Guid companyId, Stream stream)
+        public static void CreateChartOfAccounts(this IDeaClient client, Guid companyId, Guid periodId, Stream stream)
         {
             using (var document = new Document(new Rectangle(PageSize.A4), 72, 72, 72, 72))
             using (var writer = PdfWriter.GetInstance(document, stream))
             {
                 document.Open();
                 
-                client.CreateChartOfAccounts(companyId, document);
+                client.CreateChartOfAccounts(companyId, periodId, document);
                 
                 document.Close();
                 writer.Close();
             }
         }
 
-        internal static void CreateChartOfAccounts(this IDeaClient client, Guid companyId, Document document)
+        internal static void CreateChartOfAccounts(this IDeaClient client, Guid companyId, Guid periodId, Document document)
         {
             var table = new PdfPTable(2) { WidthPercentage = 100 };
 

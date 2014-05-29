@@ -16,13 +16,16 @@
         [Parameter]
         public SwitchParameter Open { get; set; }
 
+        [Parameter(Mandatory = true)]
+        public Guid PeriodId { get; set; }
+
         protected override void BeginProcessing()
         {
             var fileName = this.Path ?? ExportChartOfAccounts.GetPath();
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
-                this.Client.CreateChartOfAccounts(this.CompanyId, fs);
+                this.Client.CreateChartOfAccounts(this.CompanyId, this.PeriodId, fs);
             }
 
             if ((null == this.Path) || this.Open.ToBool())
