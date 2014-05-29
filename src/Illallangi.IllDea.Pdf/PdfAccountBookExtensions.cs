@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using Illallangi.IllDea.Client.Txn;
-using Illallangi.IllDea.Model;
-
-namespace Illallangi.IllDea.Pdf
+﻿namespace Illallangi.IllDea.Pdf
 {
     using System;
     using System.IO;
@@ -41,133 +37,181 @@ namespace Illallangi.IllDea.Pdf
 
         internal static void CreateAccountBook(this IDeaClient client, Guid companyId, Guid periodId, Guid accountId, Document document)
         {
-            var company = client.Company.Retrieve().Single(c => c.Id.Equals(companyId));
             var account = client.Account.Retrieve(companyId).Single(a => a.Id.Equals(accountId));
+            var period = client.Period.Retrieve(companyId).Single(p => p.Id.Equals(periodId));
+
             var table = new PdfPTable(7) { WidthPercentage = 100 };
 
-            table.SetWidths(new[] { 30, 21, 265, 45, 85, 85, 85 });
+            table.SetWidths(new[] { 32, 21, 263, 45, 85, 85, 85 });
 
-            table.AddCell(new PdfPCell(new Phrase(company.Name.ToUpper(), PdfAccountBookExtensions.Font.CompanyHeader)) { Colspan = 7, HorizontalAlignment = 1, Border = Rectangle.NO_BORDER });
-            table.AddCell(new PdfPCell(new Phrase(string.Format("{0} A/C {1}: {2}", account.Type, account.Number, account.Name), PdfAccountBookExtensions.Font.DocumentHeader)) { Colspan = 7, HorizontalAlignment = 1, Border = Rectangle.NO_BORDER });
+            table
+                .AddPageHeaderCell(string.Format("{0} A/C {1}: {2}", account.Type, account.Number, account.Name)).Go();
 
-            table.AddCell(
-                new PdfPCell(
-                    new Phrase(client.Period.Retrieve(companyId).Single(p => p.Id.Equals(periodId)).ToTitle(), PdfAccountBookExtensions.Font.Body))
-                    {
-                        Colspan = 7,
-                        HorizontalAlignment = 1,
-                        Border = Rectangle.NO_BORDER,
-                    });
+            table
+                .AddColumnHeaderCell().WithColspan(2).Go()
+                .AddColumnHeaderCell().Go()
+                .AddColumnHeaderCell("Post Ref").Inverted().Go()
+                .AddColumnHeaderCell("Debit").Go()
+                .AddColumnHeaderCell("Credit").Inverted().Go()
+                .AddColumnHeaderCell("Balance").Go();
 
-            table.AddCell(new PdfPCell { MinimumHeight = 13f, Colspan = 7, Border = Rectangle.NO_BORDER });
 
-            table.AddCell(new PdfPCell(new Phrase("Date", PdfAccountBookExtensions.Font.Body)) { BackgroundColor = BaseColor.LIGHT_GRAY, Colspan = 2 });
-            table.AddCell(new PdfPCell(new Phrase("Explanation", PdfAccountBookExtensions.Font.Body)) { BackgroundColor = BaseColor.LIGHT_GRAY });
-            table.AddCell(new PdfPCell(new Phrase("Post Ref", PdfAccountBookExtensions.Font.Body)) { BackgroundColor = BaseColor.LIGHT_GRAY });
-            table.AddCell(new PdfPCell(new Phrase("Debit", PdfAccountBookExtensions.Font.Body)) { BackgroundColor = BaseColor.LIGHT_GRAY });
-            table.AddCell(new PdfPCell(new Phrase("Credit", PdfAccountBookExtensions.Font.Body)) { BackgroundColor = BaseColor.LIGHT_GRAY });
-            table.AddCell(new PdfPCell(new Phrase("Balance", PdfAccountBookExtensions.Font.Body)) { BackgroundColor = BaseColor.LIGHT_GRAY });
+            var txns = client.Txn.RetrieveWithBalances(companyId, periodId, accountId).ToList();
 
-            var year = string.Empty;
-            var month = string.Empty;
-            var day = string.Empty;
+            var year = period.Start.Year.ToString();
+            var month = period.Start.ToString("MMM");
+            var day = period.Start.Day.ToString();
 
-            foreach (var txn in client.Txn.RetrieveWithBalances(companyId, periodId, accountId))
+            table
+                .AddBodyCell(year).WithColspan(2).CenterAligned().Go()
+                .AddBodyCell().Go()
+                .AddBodyCell().Inverted().Go()
+                .AddBodyCell().Go()
+                .AddBodyCell().Inverted().Go()
+                .AddBodyCell().Go();
+
+            table
+                .AddBodyCell(month).CenterAligned().Go()
+                .AddBodyCell(day).CenterAligned().Go()
+                .AddBodyCell(@"Opening Balance").Go()
+                .AddBodyCell().Inverted().Go()
+                .AddBodyCell().Go()
+                .AddBodyCell().Inverted().Go()
+                .AddBodyCell(txns.First().Items.Single(i => i.Account.Equals(accountId)).BalanceBefore.ToString(@"C")).RightAligned().Go();
+            
+            table
+                .AddBodyCell().Go()
+                .AddBodyCell().Go()
+                .AddBodyCell().Go()
+                .AddBodyCell().Inverted().Go()
+                .AddBodyCell().Go()
+                .AddBodyCell().Inverted().Go()
+                .AddBodyCell().Go();
+
+            foreach (var txn in txns)
             {
-                var item = txn.Items.Single(i => i.Account.Equals(accountId));
-
                 if (year != txn.Date.Year.ToString())
                 {
                     year = txn.Date.Year.ToString();
-                    table.AddCell(
-                        new PdfPCell(new Phrase(year, PdfAccountBookExtensions.Font.Body)) { Colspan = 2, HorizontalAlignment = 1 });
-                    table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                    table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                    table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                    table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                    table.AddCell(new PdfPCell { MinimumHeight = 13f });
+                    table
+                        .AddBodyCell(year).WithColspan(2).CenterAligned().Go()
+                        .AddBodyCell().Go()
+                        .AddBodyCell().Inverted().Go()
+                        .AddBodyCell().Go()
+                        .AddBodyCell().Inverted().Go()
+                        .AddBodyCell().Go();
                 }
+
+                var item = txn.Items.Single(i => i.Account.Equals(accountId));
 
                 if (month != txn.Date.ToString("MMM"))
                 {
-                    month = txn.Date.ToString("MMM");
-                    table.AddCell(new PdfPCell(new Phrase(month, PdfAccountBookExtensions.Font.Body)));
+                    table.AddBodyCell(month = txn.Date.ToString("MMM")).CenterAligned().Go();
                 }
                 else
                 {
-                    table.AddCell(new PdfPCell { MinimumHeight = 13f });
+                    table.AddBodyCell().Go();
                 }
 
                 if (day != txn.Date.Day.ToString())
                 {
                     day = txn.Date.Day.ToString();
-                    table.AddCell(
-                        new PdfPCell(new Phrase(day, PdfAccountBookExtensions.Font.Body)) { HorizontalAlignment = 2 });
+                    table
+                        .AddBodyCell(day).CenterAligned().Go();
                 }
                 else
                 {
-                    table.AddCell(new PdfPCell { MinimumHeight = 13f });
+                    table
+                        .AddBodyCell().Go();
                 }
 
                 var explanation = string.Join(
                     "/",
                     txn.Items
                         .Where(i => i.IsDebit != item.IsDebit)
+                        .OrderByDescending(i => Math.Abs(i.Amount))
                         .Select(i => client.Account.Retrieve(companyId).Single(a => a.Id.Equals(i.Account)).Name));
 
-                table.AddCell(new PdfPCell(new Phrase(explanation, PdfAccountBookExtensions.Font.Body)));
-                table.AddCell(new PdfPCell(new Phrase(client.Account.Retrieve(companyId).Single(a => a.Id.Equals(item.Account)).Number, PdfAccountBookExtensions.Font.Body)) { HorizontalAlignment = 1 });
+                table
+                    .AddBodyCell(explanation).Go()
+                    .AddBodyCell(client.Account.Retrieve(companyId).Single(a => a.Id.Equals(item.Account)).Number).CenterAligned().Inverted().Go();
+
 
                 if (item.IsDebit)
                 {
-                    table.AddCell(new PdfPCell(new Phrase((0 - item.Amount).ToString(@"C"), PdfAccountBookExtensions.Font.Body)) { HorizontalAlignment = 2 });
-                    table.AddCell(new PdfPCell { MinimumHeight = 13f });
+                    table
+                        .AddBodyCell((0 - item.Amount).ToString(@"C")).RightAligned().Go()
+                        .AddBodyCell().Inverted().Go();
                 }
                 else
                 {
-                    table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                    table.AddCell(new PdfPCell(new Phrase(item.Amount.ToString(@"C"), PdfAccountBookExtensions.Font.Body)) { HorizontalAlignment = 2 });
+                    table
+                        .AddBodyCell().Go()
+                        .AddBodyCell((0 + item.Amount).ToString(@"C")).RightAligned().Inverted().Go();
                 }
 
-                table.AddCell(new PdfPCell(new Phrase(item.BalanceAfter.ToString(@"C"), PdfAccountBookExtensions.Font.Body)) { HorizontalAlignment = 2 });
+                table
+                    .AddBodyCell(item.BalanceAfter.ToString(@"C")).RightAligned().Go();
 
-                table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                table.AddCell(new PdfPCell { MinimumHeight = 13f });
+                table
+                    .AddBodyCell().Go()
+                    .AddBodyCell().Go()
+                    .AddItalicisedBodyCell(txn.Description.Trim()).Go()
+                    .AddBodyCell().Inverted().Go()
+                    .AddBodyCell().Go()
+                    .AddBodyCell().Inverted().Go()
+                    .AddBodyCell().Go();
 
-                var line = string.Empty;
-
-                foreach (var word in txn.Description.Split())
-                {
-                    if (line.Length + word.Length + 1 > 55)
-                    {
-                        table.AddCell(new PdfPCell(new Phrase(line.Trim(), PdfAccountBookExtensions.Font.BodyItalic)));
-                        table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                        table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                        table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                        table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                        table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                        table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                        line = string.Empty;
-                    }
-                    line = string.Concat(line, @" ", word);
-                }
-
-                table.AddCell(new PdfPCell(new Phrase(line.Trim(), PdfAccountBookExtensions.Font.BodyItalic)));
-
-                table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                table.AddCell(new PdfPCell { MinimumHeight = 13f });
-                table.AddCell(new PdfPCell { MinimumHeight = 13f });
+                table
+                    .AddBodyCell().Go()
+                    .AddBodyCell().Go()
+                    .AddBodyCell().Go()
+                    .AddBodyCell().Inverted().Go()
+                    .AddBodyCell().Go()
+                    .AddBodyCell().Inverted().Go()
+                    .AddBodyCell().Go();
             }
 
-            table.AddCell(new PdfPCell { MinimumHeight = 13f, Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER });
-            table.AddCell(new PdfPCell { MinimumHeight = 13f, Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER });
-            table.AddCell(new PdfPCell { MinimumHeight = 13f, Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER });
-            table.AddCell(new PdfPCell { MinimumHeight = 13f, Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER });
-            table.AddCell(new PdfPCell { MinimumHeight = 13f, Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER });
-            table.AddCell(new PdfPCell { MinimumHeight = 13f, Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER });
-            table.AddCell(new PdfPCell { MinimumHeight = 13f, Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER });
+            if (year != period.End.Year.ToString())
+            {
+                year = period.End.Year.ToString();
+                table
+                    .AddBodyCell(year).WithColspan(2).CenterAligned().Go()
+                    .AddBodyCell().Go()
+                    .AddBodyCell().Inverted().Go()
+                    .AddBodyCell().Go()
+                    .AddBodyCell().Inverted().Go()
+                    .AddBodyCell().Go();
+            }
 
+            if (month != period.End.ToString("MMM"))
+            {
+                table.AddBodyCell(month = period.End.ToString("MMM")).CenterAligned().Go();
+            }
+            else
+            {
+                table.AddBodyCell().Go();
+            }
+
+            if (day != period.End.Day.ToString())
+            {
+                day = period.End.Day.ToString();
+                table
+                    .AddBodyCell(day).CenterAligned().Go();
+            }
+            else
+            {
+                table
+                    .AddBodyCell().Go();
+            }
+
+            table
+                .AddBodyCell(@"Closing Balance").Go()
+                .AddBodyCell().Inverted().Go()
+                .AddBodyCell().Go()
+                .AddBodyCell().Inverted().Go()
+                .AddBodyCell(txns.Last().Items.Single(i => i.Account.Equals(accountId)).BalanceAfter.ToString(@"C")).RightAligned().Go();
+            
             document.NewPage();
             document.Add(table);
         }
