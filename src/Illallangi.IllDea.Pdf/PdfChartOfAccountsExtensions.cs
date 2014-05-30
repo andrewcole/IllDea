@@ -27,29 +27,43 @@
 
         internal static void CreateChartOfAccounts(this IDeaClient client, Guid companyId, Guid periodId, Document document)
         {
-            var table = new PdfPTable(2) { WidthPercentage = 100 };
+            var table = new PdfPTable(4) { WidthPercentage = 100 };
 
-            table.SetWidths(new[] { 21, 4 });
+            table.SetWidths(new[] { 401, 85, 85, 85 });
 
             table
                 .AddPageHeaderCell(@"Chart of Accounts").Go()
                 .AddColumnHeaderCell().Go()
-                .AddColumnHeaderCell(@"Account No.").Inverted().Go();
+                .AddColumnHeaderCell(@"Account No.").Inverted().Go()
+                .AddColumnHeaderCell(@"Opening").Go()
+                .AddColumnHeaderCell(@"Closing").Inverted().Go();
             
             foreach (var accountType in Enum.GetValues(typeof(AccountType)).Cast<AccountType>())
             {
                 table
                     .AddBodyCell().Go()
+                    .AddBodyCell().Inverted().Go()
+                    .AddBodyCell().Go()
                     .AddBodyCell().Inverted().Go();
                 
                 table
                     .AddHeaderCell(accountType.ToString()).Go()
-                    .AddHeaderCell().Inverted().Go();
+                    .AddHeaderCell().Inverted().Go()
+                    .AddBodyCell().Go()
+                    .AddBodyCell().Inverted().Go();
 
                 foreach (var account in client.Account.Retrieve(companyId).Where(a => a.Type.Equals(accountType)))
                 {
-                    table.AddBodyCell(account.Name).WithTabStops().Go()
-                         .AddBodyCell(account.Number).Inverted().CenterAligned().Go();
+                    var txns = client.Txn.RetrieveWithBalances(companyId, periodId, account.Id).ToList();
+
+                    if (txns.Count != 0)
+                    { 
+                        table
+                            .AddBodyCell(account.Name).WithTabStops().Go()
+                            .AddBodyCell(account.Number).Inverted().CenterAligned().Go()
+                            .AddBodyCell(txns.First().Items.Single(i => i.Account.Equals(account.Id)).BalanceBefore.ToString(@"C")).RightAligned().Go()
+                            .AddBodyCell(txns.Last().Items.Single(i => i.Account.Equals(account.Id)).BalanceAfter.ToString(@"C")).Inverted().RightAligned().Go();
+                    }
                 }
             }
 
