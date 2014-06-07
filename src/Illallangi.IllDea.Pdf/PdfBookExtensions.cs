@@ -17,7 +17,9 @@ namespace Illallangi.IllDea.Pdf
             using (var writer = PdfWriter.GetInstance(document, stream))
             {
                 document.Open();
-                
+
+                client.CreateEmployeeRegister(companyId, document);
+
                 foreach (var periodId in client.Period.Retrieve(companyId).Select(p => p.Id))
                 {
                     client.CreatePeriodCoverPage(companyId, periodId, document);

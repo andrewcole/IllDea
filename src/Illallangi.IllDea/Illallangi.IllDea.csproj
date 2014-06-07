@@ -52,6 +52,7 @@
     <Compile Include="AccountType.cs" />
     <Compile Include="Model\IAccount.cs" />
     <Compile Include="Model\IDocument.cs" />
+    <Compile Include="Model\IEmployee.cs" />
     <Compile Include="Model\IPeriod.cs" />
     <Compile Include="Model\ISettings.cs" />
     <Compile Include="Model\ICompany.cs" />

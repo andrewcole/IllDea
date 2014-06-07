@@ -119,4 +119,79 @@ if ($null -ne (Get-Module PSCompletion))
 		param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
 		Get-Account | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
 	}
+
+	Register-ParameterCompleter New-Employee SalaryExpenseAccountName {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account -Name "$wordToComplete*" | Sort-Object { $_.Name } |%{ New-CompletionResult """$($_.Name)""" }
+	}
+
+	Register-ParameterCompleter New-Employee SalaryExpenseAccountNumber {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account | Where-Object { $_.Number.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Number } |%{ New-CompletionResult """$($_.Number)""" }
+	}
+
+	Register-ParameterCompleter New-Employee SalaryExpenseAccountId {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
+	}
+
+	Register-ParameterCompleter New-Employee EmployeeLiabilityAccountName {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account -Name "$wordToComplete*" | Sort-Object { $_.Name } |%{ New-CompletionResult """$($_.Name)""" }
+	}
+
+	Register-ParameterCompleter New-Employee EmployeeLiabilityAccountNumber {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account | Where-Object { $_.Number.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Number } |%{ New-CompletionResult """$($_.Number)""" }
+	}
+
+	Register-ParameterCompleter New-Employee EmployeeLiabilityAccountId {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
+	}
+
+	Register-ParameterCompleter New-Employee IncomeTaxLiabilityAccountName {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account -Name "$wordToComplete*" | Sort-Object { $_.Name } |%{ New-CompletionResult """$($_.Name)""" }
+	}
+
+	Register-ParameterCompleter New-Employee IncomeTaxLiabilityAccountNumber {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account | Where-Object { $_.Number.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Number } |%{ New-CompletionResult """$($_.Number)""" }
+	}
+
+	Register-ParameterCompleter New-Employee IncomeTaxLiabilityAccountId {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
+	}
+
+	Register-ParameterCompleter New-Employee SuperannuationExpenseAccountName {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account -Name "$wordToComplete*" | Sort-Object { $_.Name } |%{ New-CompletionResult """$($_.Name)""" }
+	}
+
+	Register-ParameterCompleter New-Employee SuperannuationExpenseAccountNumber {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account | Where-Object { $_.Number.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Number } |%{ New-CompletionResult """$($_.Number)""" }
+	}
+
+	Register-ParameterCompleter New-Employee SuperannuationExpenseAccountId {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
+	}
+
+	Register-ParameterCompleter New-Employee SuperannuationLiabilityAccountName {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account -Name "$wordToComplete*" | Sort-Object { $_.Name } |%{ New-CompletionResult """$($_.Name)""" }
+	}
+
+	Register-ParameterCompleter New-Employee SuperannuationLiabilityAccountNumber {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account | Where-Object { $_.Number.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Number } |%{ New-CompletionResult """$($_.Number)""" }
+	}
+
+	Register-ParameterCompleter New-Employee SuperannuationLiabilityAccountId {
+	  param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+	  Get-Account | Where-Object { $_.Id.ToString() -like "$wordToComplete*" } | Sort-Object { $_.Id } |%{ New-CompletionResult """$($_.Id.ToString())""" }
+	}
 }

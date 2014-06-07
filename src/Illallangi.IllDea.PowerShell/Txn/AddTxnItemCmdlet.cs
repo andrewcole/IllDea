@@ -21,8 +21,6 @@
 
         private WildcardPattern currentAccountNameWildcardPattern;
 
-        private Guid currentAccountId;
-
         private string currentAccountNumber;
 
         private WildcardPattern currentAccountNumberWildcardPattern;

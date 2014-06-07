@@ -1,4 +1,6 @@
-﻿namespace Illallangi.IllDea.Client
+﻿using Illallangi.IllDea.Client.Employee;
+
+namespace Illallangi.IllDea.Client
 {
     using System;
     using System.Collections.Generic;
@@ -32,6 +34,8 @@
 
         private ICrudClient<IPeriod> currentPeriod;
 
+        private ICrudClient<IEmployee> currentEmployee;
+ 
         private ITxnClient currentTxn;
 
         #endregion
@@ -91,6 +95,14 @@
             get
             {
                 return this.currentTxn ?? (this.currentTxn = this.GetTxnClient());
+            }
+        }
+
+        public ICrudClient<IEmployee> Employee
+        {
+            get
+            {
+                return this.currentEmployee ?? (this.currentEmployee = this.GetEmployeeClient());
             }
         }
 
@@ -243,6 +255,11 @@
         private ICrudClient<IPeriod> GetPeriodClient()
         {
             return new GitPeriodClient(this).HookEvents(this);
+        }
+
+        private ICrudClient<IEmployee> GetEmployeeClient()
+        {
+            return new GitEmployeeClient(this).HookEvents(this);
         }
 
         private ITxnClient GetTxnClient()

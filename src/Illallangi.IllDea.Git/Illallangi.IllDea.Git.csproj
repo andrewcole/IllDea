@@ -54,12 +54,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\Employee\GitEmployeeClient.cs" />
     <Compile Include="Client\Document\GitDocumentClient.cs" />
     <Compile Include="Client\Period\GitPeriodClient.cs" />
     <Compile Include="Client\BaseClient.cs" />
     <Compile Include="Client\Account\GitAccountClient.cs" />
     <Compile Include="Client\Settings\GitSettingsClient.cs" />
     <Compile Include="Client\Txn\GitTxnClient.cs" />
+    <Compile Include="Model\GitEmployee.cs" />
     <Compile Include="Model\GitDocument.cs" />
     <Compile Include="Model\GitPeriod.cs" />
     <Compile Include="Model\GitAccount.cs" />

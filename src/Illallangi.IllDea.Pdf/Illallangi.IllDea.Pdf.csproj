@@ -49,6 +49,7 @@
     <Compile Include="PdfAccountBookExtensions.cs" />
     <Compile Include="PdfAttachedDocumentExtensions.cs" />
     <Compile Include="PdfCellOperation.cs" />
+    <Compile Include="PdfEmployeeRegisterExtensions.cs" />
     <Compile Include="PdfPeriodCoverPageExtensions.cs" />
     <Compile Include="PdfGeneralJournalExtensions.cs" />
     <Compile Include="PdfChartOfAccountsExtensions.cs" />

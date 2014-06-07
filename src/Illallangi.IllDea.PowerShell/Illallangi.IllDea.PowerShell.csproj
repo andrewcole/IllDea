@@ -43,11 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Employee\GetEmployeeCmdlet.cs" />
+    <Compile Include="Employee\NewEmployeeCmdlet.cs" />
+    <Compile Include="Employee\RemoveEmployeeCmdlet.cs" />
+    <Compile Include="Employee\SetEmployeeCmdlet.cs" />
     <Compile Include="Document\OpenDocumentCmdlet.cs" />
     <Compile Include="Document\GetDocumentCmdlet.cs" />
     <Compile Include="Document\ImportDocumentCmdlet.cs" />
     <Compile Include="Document\RemoveDocumentCmdlet.cs" />
     <Compile Include="Document\SetDocumentCmdlet.cs" />
+    <Compile Include="Pdf\ExportEmployeeRegister.cs" />
     <Compile Include="Pdf\ExportCompleteBook.cs" />
     <Compile Include="Pdf\ExportGeneralJournal.cs" />
     <Compile Include="Pdf\ExportChartOfAccounts.cs" />
@@ -90,6 +95,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Illallangi.IllDea.PowerShell.Formats.ps1xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -2,8 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-
-    using Illallangi.IllDea.Client;
     using Illallangi.IllDea.Extensions;
 
     using Microsoft.Win32;
@@ -18,6 +16,7 @@
         private IList<Guid> currentPeriods;
         private IList<Guid> currentTxns;
         private IList<Guid> currentDocuments;
+        private IList<Guid> currentEmployees;
 
         #endregion
 
@@ -106,6 +105,15 @@
             }
         }
 
+        [JsonProperty("employees")]
+        public IList<Guid> Employees
+        {
+            get
+            {
+                return this.currentEmployees ?? (this.currentEmployees = new List<Guid>());
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -128,6 +136,11 @@
         public bool ShouldSerializeDocuments()
         {
             return this.Documents.Count > 0;
+        }
+
+        public bool ShouldSerializeEmployees()
+        {
+            return this.Employees.Count > 0;
         }
 
         #endregion

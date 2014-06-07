@@ -15,6 +15,7 @@ namespace Illallangi.IllDea.Client
         ICrudClient<IAccount> Account { get; }
         ICrudClient<IDocument> Document { get; } 
         ICrudClient<IPeriod> Period { get; }
+        ICrudClient<IEmployee> Employee { get; } 
         ITxnClient Txn { get; }
     }
 }
