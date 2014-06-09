@@ -18,13 +18,16 @@
         [Parameter]
         public SwitchParameter Open { get; set; }
 
+        [Parameter]
+        public SwitchParameter IncludeDocuments { get; set; }
+
         protected override void BeginProcessing()
         {
             var fileName = this.Path ?? ExportCompleteBook.GetPath();
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
-                this.Client.CreateBook(this.CompanyId, fs);
+                this.Client.CreateBook(this.CompanyId, this.IncludeDocuments.ToBool(), fs);
             }
 
             if ((null == this.Path) || this.Open.ToBool())

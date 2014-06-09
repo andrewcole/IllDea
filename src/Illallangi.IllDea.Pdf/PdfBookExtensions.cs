@@ -11,7 +11,7 @@ namespace Illallangi.IllDea.Pdf
 
     public static class PdfBookExtensions
     {
-        public static void CreateBook(this IDeaClient client, Guid companyId, Stream stream)
+        public static void CreateBook(this IDeaClient client, Guid companyId, bool includeDocuments, Stream stream)
         {
             using (var document = new Document(new Rectangle(PageSize.A4), 72, 72, 72, 72))
             using (var writer = PdfWriter.GetInstance(document, stream))
@@ -33,9 +33,12 @@ namespace Illallangi.IllDea.Pdf
                         client.CreateAccountBook(companyId, periodId, accountId, document);
                     }
 
-                    foreach (var documentId in client.Document.Retrieve(companyId).Where(d => d.Period.Equals(periodId)).Select(d => d.Id))
+                    if (includeDocuments)
                     {
-                        client.CreateAttachedDocument(companyId, periodId, documentId, document, writer);
+                        foreach (var documentId in client.Document.Retrieve(companyId).Where(d => d.Period.Equals(periodId)).Select(d => d.Id))
+                        {
+                            client.CreateAttachedDocument(companyId, periodId, documentId, document, writer);
+                        }
                     }
                 }
 
