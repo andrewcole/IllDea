@@ -54,7 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client\Payroll\GitEmployeeClient.cs" />
+    <Compile Include="Client\Payroll\GitPayrollClient.cs" />
     <Compile Include="DeleteInternalGitTxnException.cs" />
     <Compile Include="UpdateInternalTxnException.cs" />
     <Compile Include="Model\GitPayroll.cs" />
