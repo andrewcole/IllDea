@@ -53,9 +53,16 @@ namespace Illallangi.IllDea.Client.Txn
 
         public ITxn Update(Guid companyId, ITxn document, string log = null)
         {
+            var gitTxn = this.RetrieveTxn(companyId: companyId, id: document.Id).Single();
+
+            if (gitTxn.Internal)
+            {
+                throw new UpdateInternalTxnException(gitTxn);
+            }
+
             return this.UpdateTxn(
                 companyId,
-                this.RetrieveTxn(companyId: companyId, id: document.Id).Single(),
+                gitTxn,
                 document.Date,
                 document.Description,
                 document.Items,
@@ -64,8 +71,15 @@ namespace Illallangi.IllDea.Client.Txn
 
         public void Delete(Guid companyId, ITxn txn, string log = null)
         {
+            var gitTxn = this.RetrieveTxn(companyId: companyId, id: txn.Id).Single();
+
+            if (gitTxn.Internal)
+            {
+                throw new DeleteInternalGitTxnException(gitTxn);
+            }
+
             this.DeleteTxn(
-                this.RetrieveTxn(companyId: companyId, id: txn.Id).Single(),
+                gitTxn,
                 log);
         }
 
@@ -94,7 +108,7 @@ namespace Illallangi.IllDea.Client.Txn
             }
         }
 
-        private GitTxn CreateTxn(Guid companyId, GitTxn txn, string log = null)
+        internal GitTxn CreateTxn(Guid companyId, GitTxn txn, string log = null)
         {
             var index = this.Client.Retrieve(companyId: companyId).Single();
             var period = this.Client.Period.Retrieve(companyId).Single(p => (p.Start <= txn.Date) && (p.End >= txn.Date));
@@ -124,7 +138,7 @@ namespace Illallangi.IllDea.Client.Txn
             return txn;
         }
 
-        private IEnumerable<GitTxn> RetrieveTxn(Guid companyId, Guid? id = null, Guid? accountId = null)
+        internal IEnumerable<GitTxn> RetrieveTxn(Guid companyId, Guid? id = null, Guid? accountId = null)
         {
             var index = this.Client.Retrieve(companyId: companyId).Single();
 
@@ -149,7 +163,7 @@ namespace Illallangi.IllDea.Client.Txn
             }
         }
 
-        private GitTxn UpdateTxn(Guid companyId, GitTxn txn, DateTime? date, string description, IEnumerable<TxnItem> items, string log)
+        internal GitTxn UpdateTxn(Guid companyId, GitTxn txn, DateTime? date, string description, IEnumerable<TxnItem> items, string log)
         {
             txn.Date = date ?? txn.Date;
             txn.Description = description ?? txn.Description;
@@ -180,7 +194,7 @@ namespace Illallangi.IllDea.Client.Txn
             }
         }
 
-        private void DeleteTxn(GitTxn txn, string log)
+        internal void DeleteTxn(GitTxn txn, string log)
         {
             var index = this.Client.Retrieve(id: txn.Index).Single();
             index.Txns.Remove(txn.Id);

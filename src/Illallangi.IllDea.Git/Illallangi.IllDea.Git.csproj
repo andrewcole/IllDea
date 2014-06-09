@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\Payroll\GitEmployeeClient.cs" />
+    <Compile Include="DeleteInternalGitTxnException.cs" />
+    <Compile Include="UpdateInternalTxnException.cs" />
     <Compile Include="Model\GitPayroll.cs" />
     <Compile Include="HrefConverter.cs" />
     <Compile Include="Client\Employee\GitEmployeeClient.cs" />

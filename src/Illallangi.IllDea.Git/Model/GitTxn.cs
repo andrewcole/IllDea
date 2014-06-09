@@ -20,9 +20,17 @@
             return this.Items.Count > 0;
         }
 
+        public bool ShouldSerializeInternal()
+        {
+            return this.Internal;
+        }
+
         #endregion
 
         #region Properties
+
+        [JsonProperty("internal")]
+        public bool Internal { get; set; }
 
         [JsonProperty("period")]
         public Guid Period { get; set; }
