@@ -16,19 +16,6 @@ namespace Illallangi.IllDea
 
         #endregion
 
-        #region Properties
-
-        private static JsonSerializerSettings SerializerSettings
-        {
-            get
-            {
-                return IndexJsonExtensions.staticSerializerSettings
-                       ?? (IndexJsonExtensions.staticSerializerSettings = IndexJsonExtensions.GetSerializerSettings());
-            }
-        }
-
-        #endregion
-
         #region Methods
 
         public static GitSettings LoadIndex(this string path)
@@ -52,16 +39,7 @@ namespace Illallangi.IllDea
         {
             return JsonConvert.DeserializeObject<T>(
                 File.ReadAllText(path),
-                IndexJsonExtensions.SerializerSettings);
-        }
-
-        private static JsonSerializerSettings GetSerializerSettings()
-        {
-            return new JsonSerializerSettings
-            {
-                Culture = CultureInfo.InvariantCulture,
-                MissingMemberHandling = MissingMemberHandling.Error,
-            };
+                SerializerSettings.Instance);
         }
 
         #endregion

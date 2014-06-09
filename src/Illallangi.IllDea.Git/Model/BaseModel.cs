@@ -10,7 +10,6 @@
         private string currentClass;
 
         [JsonProperty("self")]
-        [JsonConverter(typeof(HrefConverter))]
         public Guid Id { get; set; }
 
         [JsonProperty("index")]

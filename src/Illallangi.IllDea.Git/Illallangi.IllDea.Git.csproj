@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="Client\Payroll\GitPayrollClient.cs" />
     <Compile Include="DeleteInternalGitTxnException.cs" />
+    <Compile Include="Extensions\SerializerSettings.cs" />
     <Compile Include="UpdateInternalTxnException.cs" />
     <Compile Include="Model\GitPayroll.cs" />
     <Compile Include="HrefConverter.cs" />

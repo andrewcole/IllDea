@@ -19,25 +19,6 @@ namespace Illallangi.IllDea
     {
         #region Fields
 
-        private static JsonSerializerSettings staticSerializerSettings;
-
-        #endregion
-
-        #region Properties
-
-        private static JsonSerializerSettings SerializerSettings
-        {
-            get
-            {
-                return Atomic.staticSerializerSettings
-                       ?? (Atomic.staticSerializerSettings = Atomic.GetSerializerSettings());
-            }
-        }
-
-        #endregion
-
-        #region Fields
-
         private readonly GitSettings currentIndex;
 
         private readonly string currentMessage;
@@ -215,17 +196,8 @@ namespace Illallangi.IllDea
                 JsonConvert.SerializeObject(
                     obj,
                     Formatting.Indented,
-                    Atomic.SerializerSettings));
+                    SerializerSettings.Instance));
             return obj;
-        }
-
-        private static JsonSerializerSettings GetSerializerSettings()
-        {
-            return new JsonSerializerSettings
-                       {
-                           Culture = CultureInfo.InvariantCulture,
-                           MissingMemberHandling = MissingMemberHandling.Error,
-                       };
         }
 
         public void Download(Uri uri, string file)
