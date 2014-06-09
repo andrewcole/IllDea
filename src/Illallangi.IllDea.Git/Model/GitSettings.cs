@@ -17,8 +17,8 @@
         private IList<Guid> currentTxns;
         private IList<Guid> currentDocuments;
         private IList<Guid> currentEmployees;
-
-        #endregion
+        private IList<Guid> currentPayrolls;
+            #endregion
 
         #region Properties
 
@@ -111,6 +111,15 @@
             get
             {
                 return this.currentEmployees ?? (this.currentEmployees = new List<Guid>());
+            }
+        }
+
+        [JsonProperty("payrolls")]
+        public IList<Guid> Payrolls
+        {
+            get
+            {
+                return this.currentPayrolls ?? (this.currentPayrolls = new List<Guid>());
             }
         }
 

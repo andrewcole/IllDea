@@ -17,5 +17,7 @@ namespace Illallangi.IllDea.Client
         ICrudClient<IPeriod> Period { get; }
         ICrudClient<IEmployee> Employee { get; } 
         ITxnClient Txn { get; }
+
+        ICrudClient<IPayroll> Payroll { get; } 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Illallangi.IllDea.Client.Employee;
+using Illallangi.IllDea.Client.Payroll;
 
 namespace Illallangi.IllDea.Client
 {
@@ -38,6 +39,7 @@ namespace Illallangi.IllDea.Client
  
         private ITxnClient currentTxn;
 
+        private ICrudClient<IPayroll> currentPayroll; 
         #endregion
 
         #region Properties
@@ -95,6 +97,14 @@ namespace Illallangi.IllDea.Client
             get
             {
                 return this.currentTxn ?? (this.currentTxn = this.GetTxnClient());
+            }
+        }
+
+        public ICrudClient<IPayroll> Payroll
+        {
+            get
+            {
+                return this.currentPayroll ?? (this.currentPayroll = this.GetPayrollClient());
             }
         }
 
@@ -265,6 +275,11 @@ namespace Illallangi.IllDea.Client
         private ITxnClient GetTxnClient()
         {
             return new GitTxnClient(this).HookEvents(this);
+        }
+
+        private ICrudClient<IPayroll> GetPayrollClient()
+        {
+            return new GitPayrollClient(this).HookEvents(this);
         }
 
         #endregion

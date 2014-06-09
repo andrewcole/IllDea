@@ -54,6 +54,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\Payroll\GitEmployeeClient.cs" />
+    <Compile Include="Model\GitPayroll.cs" />
     <Compile Include="HrefConverter.cs" />
     <Compile Include="Client\Employee\GitEmployeeClient.cs" />
     <Compile Include="Client\Document\GitDocumentClient.cs" />
