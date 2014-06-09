@@ -47,7 +47,7 @@
     <Compile Include="Employee\NewEmployeeCmdlet.cs" />
     <Compile Include="Employee\RemoveEmployeeCmdlet.cs" />
     <Compile Include="Employee\SetEmployeeCmdlet.cs" />
-    <Compile Include="Document\OpenDocumentCmdlet.cs" />
+    <Compile Include="Document\ExportDocumentCmdlet.cs" />
     <Compile Include="Document\GetDocumentCmdlet.cs" />
     <Compile Include="Document\ImportDocumentCmdlet.cs" />
     <Compile Include="Document\RemoveDocumentCmdlet.cs" />
