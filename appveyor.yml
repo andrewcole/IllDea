@@ -6,7 +6,7 @@ assembly_info:
 platform: AnyCPU
 
 build:
-  project: build.proj
+  project: src\Build.proj
 
 artifacts:
   - path: artifacts/*.*
