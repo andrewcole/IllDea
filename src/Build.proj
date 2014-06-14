@@ -12,7 +12,7 @@
     <ISO8601>$([System.DateTime]::Now.ToString("yyyy-MM-ddTHH:mm:ssZ"))</ISO8601>
     <Version Condition="'$(Version)' == ''">$(APPVEYOR_BUILD_VERSION)</Version>
     <Version Condition="'$(Version)' == ''">$(BUILD_NUMBER)</Version>
-    <Version Condition="'$(Version)' == ''">0.0.1</Version>
+    <Version Condition="'$(Version)' == ''">0.0.2</Version>
 
     <BuildComment>Built on $(COMPUTERNAME) at $(ISO8601) from hash $(GitCommitHash)</BuildComment>
     <BuildDir>$(MSBuildProjectDirectory)\..\build</BuildDir>
@@ -30,7 +30,7 @@
 
     <AssemblyInfo CodeLanguage="CS"
               OutputFile="$(MSBuildProjectDirectory)\$(CompanyName).$(SolutionName)\Properties\AssemblyInfo.cs"
-              AssemblyTitle="$(CompanyTitle) $(SolutionName) Core"
+              AssemblyTitle="$(CompanyTitle) $(SolutionName) Core Library"
               AssemblyDescription=""
               AssemblyCompany="$(CompanyTitle)"
               AssemblyProduct="$(CompanyTitle) $(SolutionName)"
@@ -41,8 +41,50 @@
               AssemblyVersion="$(Version)"
               AssemblyFileVersion="$(Version)"
               Condition="$(Version) != '0.0.1'" />
-  </Target>
 
+    <AssemblyInfo CodeLanguage="CS"
+              OutputFile="$(MSBuildProjectDirectory)\$(CompanyName).$(SolutionName).Git\Properties\AssemblyInfo.cs"
+              AssemblyTitle="$(CompanyTitle) $(SolutionName) Git Library"
+              AssemblyDescription=""
+              AssemblyCompany="$(CompanyTitle)"
+              AssemblyProduct="$(CompanyTitle) $(SolutionName)"
+              AssemblyCopyright="Copyright © $(CompanyTitle) $(Year)"
+              ComVisible="false"
+              AssemblyInformationalVersion="$(BuildComment)"
+              Guid="d17e4cd1-5ed3-4712-8d58-8e15745e915a"
+              AssemblyVersion="$(Version)"
+              AssemblyFileVersion="$(Version)"
+              Condition="$(Version) != '0.0.1'" />
+
+    <AssemblyInfo CodeLanguage="CS"
+              OutputFile="$(MSBuildProjectDirectory)\$(CompanyName).$(SolutionName).Pdf\Properties\AssemblyInfo.cs"
+              AssemblyTitle="$(CompanyTitle) $(SolutionName) Pdf Library"
+              AssemblyDescription=""
+              AssemblyCompany="$(CompanyTitle)"
+              AssemblyProduct="$(CompanyTitle) $(SolutionName)"
+              AssemblyCopyright="Copyright © $(CompanyTitle) $(Year)"
+              ComVisible="false"
+              AssemblyInformationalVersion="$(BuildComment)"
+              Guid="5f23080f-673f-4a89-a93b-2906aca05887"
+              AssemblyVersion="$(Version)"
+              AssemblyFileVersion="$(Version)"
+              Condition="$(Version) != '0.0.1'" />
+
+    <AssemblyInfo CodeLanguage="CS"
+              OutputFile="$(MSBuildProjectDirectory)\$(CompanyName).$(SolutionName).PowerShell\Properties\AssemblyInfo.cs"
+              AssemblyTitle="$(CompanyTitle) $(SolutionName) PowerShell Module"
+              AssemblyDescription=""
+              AssemblyCompany="$(CompanyTitle)"
+              AssemblyProduct="$(CompanyTitle) $(SolutionName)"
+              AssemblyCopyright="Copyright © $(CompanyTitle) $(Year)"
+              ComVisible="false"
+              AssemblyInformationalVersion="$(BuildComment)"
+              Guid="a4840885-5d36-42aa-8189-e7afded2c97e"
+              AssemblyVersion="$(Version)"
+              AssemblyFileVersion="$(Version)"
+              Condition="$(Version) != '0.0.1'" />
+  </Target>
+  
   <Target Name="Compile"
         DependsOnTargets="Version">
     <Message Text="=========== Compile ===========" />
