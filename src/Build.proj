@@ -153,7 +153,7 @@
   <Target Name="Zip" DependsOnTargets="Copy">
     <Message Text="=========== Zip ===========" Importance="High" />
 
-    <CreateItem Include="$(BuildDir)\bin\*.*" >
+    <CreateItem Include="$(BuildDir)\bin\**\*.*" >
       <Output ItemName="ZipFiles" TaskParameter="Include"/>
     </CreateItem>
 
