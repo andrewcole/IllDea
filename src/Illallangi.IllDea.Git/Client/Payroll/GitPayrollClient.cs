@@ -1,4 +1,6 @@
-﻿namespace Illallangi.IllDea.Client.Payroll
+﻿using LibGit2Sharp;
+
+namespace Illallangi.IllDea.Client.Payroll
 {
     using System;
     using System.Collections.Generic;
@@ -42,7 +44,14 @@
 
         public IPayroll Create(Guid companyId, IPayroll payroll, string log = null)
         {
-            return this.CreatePayroll(companyId, Mapper.DynamicMap<GitPayroll>(payroll), log);
+            using (
+                var atomic = this.Client.Retrieve(companyId: companyId)
+                    .Single()
+                    .Atomic(log ?? "Adding Payroll {0}", payroll.Id))
+            {
+
+                return this.CreatePayroll(companyId, Mapper.DynamicMap<GitPayroll>(payroll), atomic);
+            }
         }
 
         public IEnumerable<IPayroll> Retrieve(Guid companyId)
@@ -61,7 +70,6 @@
                 payroll.SuperTxn,
                 payroll.GrossPay,
                 payroll.Tax,
-                payroll.NetPay,
                 payroll.Super,
                 log);
         }
@@ -73,20 +81,18 @@
                 log);
         }
 
-        private GitPayroll CreatePayroll(Guid companyId, GitPayroll payroll, string log = null)
+        private GitPayroll CreatePayroll(Guid companyId, GitPayroll payroll, Atomic atomic)
         {
             if (this.Retrieve(companyId).Any(a => a.Id.Equals(payroll.Id)))
             {
                 throw new DataException(string.Format(@"Payroll with Id of ""{0}"" already exists", payroll.Id));
             }
 
-            var index = this.Client.Retrieve(companyId: companyId).Single();
+            payroll.PayTxn = this.Client.GitTxn.CreateTxn(companyId, payroll.GetPayTxn(this.Client, companyId), atomic).Id;
+            payroll.SuperTxn = this.Client.GitTxn.CreateTxn(companyId, payroll.GetSuperTxn(this.Client, companyId), atomic).Id;
 
-            using (var atomic = index.Atomic(log ?? "Adding Payroll {0}", payroll.Id))
-            {
-                index.Payrolls.Add(payroll.Id);
-                atomic.Save(payroll);
-            }
+            atomic.Index.Payrolls.Add(payroll.Id);
+            atomic.Save(payroll);
 
             return payroll;
         }
@@ -114,8 +120,8 @@
                 }
             }
         }
-        
-        private IPayroll UpdatePayroll(GitPayroll payroll, DateTime? start, DateTime? end, Guid? employee, Guid? payTxn, Guid? superTxn, decimal? grossPay, decimal? tax, decimal? netPay, decimal? super, string log)
+
+        private IPayroll UpdatePayroll(GitPayroll payroll, DateTime? start, DateTime? end, Guid? employee, Guid? payTxn, Guid? superTxn, decimal? grossPay, decimal? tax, decimal? super, string log)
         {
             payroll.Start = start.HasValue ? start.Value : payroll.Start;
             payroll.End = end.HasValue ? end.Value : payroll.End;
@@ -124,7 +130,6 @@
             payroll.SuperTxn = superTxn.HasValue ? superTxn.Value : payroll.SuperTxn;
             payroll.GrossPay = grossPay ?? payroll.GrossPay;
             payroll.Tax = tax ?? payroll.Tax;
-            payroll.NetPay = netPay ?? payroll.NetPay;
             payroll.Super = super ?? payroll.Super;
 
             using (var atomic = this.Client.Retrieve(id: payroll.Index).Single().Atomic(log ?? "Updating Payroll"))

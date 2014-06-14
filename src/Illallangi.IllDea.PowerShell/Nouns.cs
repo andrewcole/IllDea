@@ -17,6 +17,9 @@
         public const string TxnItem = @"TxnItem";
 
         public const string Employee = @"Employee";
+
+        public const string Payroll = @"Payroll";
+
         public static class Pdf
         {
             public const string ChartOfAccounts = @"PdfChartOfAccounts";

@@ -37,7 +37,7 @@ namespace Illallangi.IllDea.Client
 
         private ICrudClient<IEmployee> currentEmployee;
  
-        private ITxnClient currentTxn;
+        private GitTxnClient currentTxn;
 
         private ICrudClient<IPayroll> currentPayroll; 
         #endregion
@@ -91,8 +91,13 @@ namespace Illallangi.IllDea.Client
                 return this.currentPeriod ?? (this.currentPeriod = this.GetPeriodClient());
             }
         }
-        
+
         public ITxnClient Txn
+        {
+            get { return this.GitTxn; }
+        }
+
+        public GitTxnClient GitTxn
         {
             get
             {
@@ -272,7 +277,7 @@ namespace Illallangi.IllDea.Client
             return new GitEmployeeClient(this).HookEvents(this);
         }
 
-        private ITxnClient GetTxnClient()
+        private GitTxnClient GetTxnClient()
         {
             return new GitTxnClient(this).HookEvents(this);
         }

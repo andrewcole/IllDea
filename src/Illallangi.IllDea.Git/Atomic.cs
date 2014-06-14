@@ -126,7 +126,7 @@ namespace Illallangi.IllDea
         }
 
 
-        private GitSettings Index
+        public GitSettings Index
         {
             get
             {

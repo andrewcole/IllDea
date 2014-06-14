@@ -11,11 +11,11 @@ namespace Illallangi.IllDea.Model
         Guid Employee { get; set; }
 
         Guid PayTxn { get; set; }
+
         Guid SuperTxn { get; set; }
 
         decimal GrossPay { get; set; }
         decimal Tax { get; set; }
-        decimal NetPay { get; set; }
         decimal Super { get; set; }
     }
 }

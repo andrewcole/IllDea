@@ -40,6 +40,9 @@
             
             foreach (var accountType in Enum.GetValues(typeof(AccountType)).Cast<AccountType>())
             {
+                decimal open = 0;
+                decimal close = 0;
+
                 table
                     .AddBodyCell().Go()
                     .AddBodyCell().Inverted().Go()
@@ -63,8 +66,17 @@
                             .AddBodyCell(account.Number).Inverted().CenterAligned().Go()
                             .AddBodyCell(txns.First().Items.Single(i => i.Account.Equals(account.Id)).BalanceBefore.ToString(@"C")).RightAligned().Go()
                             .AddBodyCell(txns.Last().Items.Single(i => i.Account.Equals(account.Id)).BalanceAfter.ToString(@"C")).Inverted().RightAligned().Go();
+
+                        open += txns.First().Items.Single(i => i.Account.Equals(account.Id)).BalanceBefore;
+                        close += txns.Last().Items.Single(i => i.Account.Equals(account.Id)).BalanceAfter;
                     }
                 }
+
+                table
+                    .AddBodyCell("Total").WithTabStops().Go()
+                    .AddBodyCell().Inverted().CenterAligned().Go()
+                    .AddBodyCell(open.ToString(@"C")).RightAligned().Go()
+                    .AddBodyCell(close.ToString(@"C")).Inverted().RightAligned().Go();
             }
 
             document.NewPage();

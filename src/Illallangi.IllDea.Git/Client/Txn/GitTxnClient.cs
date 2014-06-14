@@ -43,7 +43,12 @@ namespace Illallangi.IllDea.Client.Txn
 
         public ITxn Create(Guid companyId, ITxn txn, string log = null)
         {
-            return this.CreateTxn(companyId, Mapper.DynamicMap<GitTxn>(txn), log);
+            using (var atomic = this.Client.Retrieve(companyId: companyId)
+                        .Single()
+                        .Atomic(log ?? "Adding Txn {0}:- {1}", txn.Date.ToString("yyyy-MM-dd"), txn.Description))
+            {
+                return this.CreateTxn(companyId, Mapper.DynamicMap<GitTxn>(txn), atomic);
+            }
         }
 
         public IEnumerable<ITxn> Retrieve(Guid companyId)
@@ -108,9 +113,8 @@ namespace Illallangi.IllDea.Client.Txn
             }
         }
 
-        internal GitTxn CreateTxn(Guid companyId, GitTxn txn, string log = null)
+        internal GitTxn CreateTxn(Guid companyId, GitTxn txn, Atomic atomic)
         {
-            var index = this.Client.Retrieve(companyId: companyId).Single();
             var period = this.Client.Period.Retrieve(companyId).Single(p => (p.Start <= txn.Date) && (p.End >= txn.Date));
 
             txn.Period = period.Id;
@@ -128,12 +132,8 @@ namespace Illallangi.IllDea.Client.Txn
                         txn.Items.Sum(i => i.Amount)));
             }
 
-
-            using (var atomic = index.Atomic(log ?? "Adding Txn {0}:- {1}", txn.Date.ToString("yyyy-MM-dd"), txn.Description))
-            {
-                index.Txns.Add(txn.Id);
-                atomic.Save(txn);
-            }
+            atomic.Index.Txns.Add(txn.Id);
+            atomic.Save(txn);
 
             return txn;
         }
