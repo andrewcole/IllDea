@@ -39,20 +39,13 @@
         {
             var company = client.Company.Retrieve().Single(c => c.Id.Equals(companyId));
 
-            var table = new PdfPTable(6) { WidthPercentage = 100 };
+            var table = new PdfPTable(1) { WidthPercentage = 100 };
 
-            table.SetWidths(new[] { 30, 21, 350, 45, 85, 85 });
+            table.SetWidths(new[] { 616 });
 
-            table.AddCell(new PdfPCell(new Phrase(company.Name.ToUpper(), PdfPeriodCoverPageExtensions.Font.CompanyHeader)) { Colspan = 6, HorizontalAlignment = 1, Border = Rectangle.NO_BORDER });
-            
-            table.AddCell(
-                new PdfPCell(
-                    new Phrase(client.Period.Retrieve(companyId).Single(p => p.Id.Equals(periodId)).ToTitle(), PdfPeriodCoverPageExtensions.Font.DocumentHeader))
-                    {
-                        Colspan = 6, 
-                        HorizontalAlignment = 1, 
-                        Border = Rectangle.NO_BORDER,
-                    });
+            table
+                .AddPageHeaderCell(company.Name).Go()
+                .AddColumnHeaderCell(client.Period.Retrieve(companyId).Single(p => p.Id.Equals(periodId)).ToTitle()).Go();
 
             document.NewPage();
             document.Add(table);
