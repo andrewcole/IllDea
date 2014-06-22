@@ -18,13 +18,13 @@ namespace Illallangi.IllDea.Pdf
             {
                 document.Open();
 
-                client.CreateEmployeeRegister(companyId, document);
-
                 foreach (var periodId in client.Period.Retrieve(companyId).Select(p => p.Id))
                 {
                     client.CreatePeriodCoverPage(companyId, periodId, document);
 
                     client.CreateChartOfAccounts(companyId, periodId, document);
+
+                    client.CreateEmployeeRegister(companyId, document);
 
                     client.CreateGeneralJournal(companyId, periodId, document);
 
