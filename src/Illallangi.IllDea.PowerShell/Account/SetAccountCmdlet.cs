@@ -20,6 +20,10 @@
         [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public string Number { get; set; }
 
+        public decimal Opening { get; set; }
+
+        public decimal Closing { get; set; }
+
         protected override void ProcessRecord()
         {
             this.WriteObject(this.Client.Account.Update(this.CompanyId, this, this.ToString()));

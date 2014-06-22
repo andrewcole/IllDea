@@ -18,6 +18,10 @@
         [Parameter(Mandatory = true)]
         public string Number { get; set; }
 
+        public decimal Opening { get; set; }
+
+        public decimal Closing { get; set; }
+
         protected override void ProcessRecord()
         {
             this.WriteObject(this.Client.Account.Create(this.CompanyId, this, this.ToString()));

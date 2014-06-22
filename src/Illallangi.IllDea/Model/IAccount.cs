@@ -7,5 +7,9 @@
         AccountType Type { get; set; }
 
         string Number { get; set; }
+
+        decimal Opening { get; set; }
+
+        decimal Closing { get; set; }
     }
 }

@@ -29,7 +29,7 @@ namespace Illallangi.IllDea.Client
 
         private ISettingsClient currentSettings;
         
-        private ICrudClient<IAccount> currentAccount;
+        private IAccountClient currentAccount;
 
         private ICrudClient<IDocument> currentDocument;
 
@@ -68,7 +68,7 @@ namespace Illallangi.IllDea.Client
             }
         }
 
-        public ICrudClient<IAccount> Account
+        public IAccountClient Account
         {
             get
             {
@@ -257,7 +257,7 @@ namespace Illallangi.IllDea.Client
             return new GitSettingsClient(this).HookEvents(this);
         }
 
-        private ICrudClient<IAccount> GetAccountClient()
+        private IAccountClient GetAccountClient()
         {
             return new GitAccountClient(this).HookEvents(this);
         }

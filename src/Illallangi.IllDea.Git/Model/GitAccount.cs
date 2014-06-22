@@ -15,6 +15,12 @@
         [JsonProperty("number")]
         public string Number { get; set; }
 
+        [JsonIgnore]
+        public decimal Opening { get; set; }
+
+        [JsonIgnore]
+        public decimal Closing { get; set; }
+
         #endregion
 
         #region Methods

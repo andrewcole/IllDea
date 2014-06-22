@@ -55,21 +55,16 @@
                     .AddBodyCell().Go()
                     .AddBodyCell().Inverted().Go();
 
-                foreach (var account in client.Account.Retrieve(companyId).Where(a => a.Type.Equals(accountType)))
+                foreach (var account in client.Account.RetrieveWithBalances(companyId, periodId, accountType))
                 {
-                    var txns = client.Txn.RetrieveWithBalances(companyId, periodId, account.Id).ToList();
+                    table
+                        .AddBodyCell(account.Name).WithTabStops().Go()
+                        .AddBodyCell(account.Number).Inverted().CenterAligned().Go()
+                        .AddBodyCell(account.Opening.ToString(@"C")).RightAligned().Go()
+                        .AddBodyCell(account.Closing.ToString(@"C")).Inverted().RightAligned().Go();
 
-                    if (txns.Count != 0)
-                    { 
-                        table
-                            .AddBodyCell(account.Name).WithTabStops().Go()
-                            .AddBodyCell(account.Number).Inverted().CenterAligned().Go()
-                            .AddBodyCell(txns.First().Items.Single(i => i.Account.Equals(account.Id)).BalanceBefore.ToString(@"C")).RightAligned().Go()
-                            .AddBodyCell(txns.Last().Items.Single(i => i.Account.Equals(account.Id)).BalanceAfter.ToString(@"C")).Inverted().RightAligned().Go();
-
-                        open += txns.First().Items.Single(i => i.Account.Equals(account.Id)).BalanceBefore;
-                        close += txns.Last().Items.Single(i => i.Account.Equals(account.Id)).BalanceAfter;
-                    }
+                    open += account.Opening;
+                    close += account.Closing;
                 }
 
                 table

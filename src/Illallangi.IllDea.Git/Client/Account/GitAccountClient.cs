@@ -7,9 +7,10 @@
 
     using AutoMapper;
 
+    using Illallangi.IllDea.Client.Txn;
     using Illallangi.IllDea.Model;
 
-    public sealed class GitAccountClient : BaseClient, ICrudClient<IAccount>
+    public sealed class GitAccountClient : BaseClient, IAccountClient
     {
         #region Fields
 
@@ -65,6 +66,33 @@
             this.DeleteAccount(
                 this.RetrieveAccount(companyId: companyId, id: account.Id).Single(),
                 log);
+        }
+
+        public IEnumerable<IAccount> RetrieveWithBalances(Guid companyId, Guid? periodId = null, AccountType? accountType = null)
+        {
+            var period = periodId.HasValue
+                             ? this.Client.Period.Retrieve(companyId).Single(p => p.Id.Equals(periodId.Value))
+                             : null;
+
+            foreach (var account in this.Retrieve(companyId).Where(a => !accountType.HasValue || a.Type.Equals(accountType.Value)))
+            {
+                var txns =
+                    this.Client.Txn.Retrieve(companyId)
+                        .Where(t => t.Items.Any(i => i.Account.Equals(account.Id)))
+                        .ToList();
+
+                account.Opening = txns
+                                    .Where(t => null != period && t.Date < period.Start)
+                                    .Select(t => t.Items.Single(i => i.Account.Equals(account.Id)).Amount)
+                                    .Sum();
+
+                account.Closing = txns
+                                    .Where(t => null == period || t.Date <= period.End)
+                                    .Select(t => t.Items.Single(i => i.Account.Equals(account.Id)).Amount)
+                                    .Sum();
+
+                yield return account;
+            }
         }
 
         private GitAccount CreateAccount(Guid companyId, GitAccount account, string log = null)
